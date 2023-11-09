@@ -20,11 +20,12 @@ router.get("/:id/inventories", async (req, res) => {
 });
 
 router.put("/:id", ...postValidator(), ...postWarehouseValidator(), async (req, res) => {
-    const warehouseToUpdate = await knex("warehouses").where({ id: req.params.id });
+    const warehouseId = `${req.params.id}`;
+    const warehouseToUpdate = await knex("warehouses").where({ id: warehouseId });
     if (!warehouseToUpdate.length) {
         return res
             .status(404)
-            .json({ message: `No warehouse was found with the id ${req.params.id}` });
+            .json({ message: `No warehouse was found with the id ${warehouseId}` });
     }
 
     const validationErrors = validationResult(req);
@@ -45,7 +46,7 @@ router.put("/:id", ...postValidator(), ...postWarehouseValidator(), async (req, 
         contact_phone,
         contact_email,
     } = matchedData(req);
-    const updatedWarehouseId = await knex("warehouses").where({ id: req.params.id }).update({
+    await knex("warehouses").where({ id: warehouseId }).update({
         warehouse_name,
         address,
         city,
@@ -55,8 +56,7 @@ router.put("/:id", ...postValidator(), ...postWarehouseValidator(), async (req, 
         contact_phone,
         contact_email,
     });
-    const updatedWarehouse = await knex("warehouses").where({ id: updatedWarehouseId });
-
+    const updatedWarehouse = await knex("warehouses").where({ id: warehouseId });
     res.status(200).json(updatedWarehouse[0]);
 });
 
