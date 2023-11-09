@@ -1,4 +1,6 @@
 const express = require("express");
+const { validationResult, matchedData } = require("express-validator");
+const { postWarehouseValidator, postValidator } = require("../utility/validators");
 const router = express.Router();
 const knex = require("knex")(require("../knexfile"));
 
@@ -15,6 +17,47 @@ router.get("/:id/inventories", async (req, res) => {
         console.error(error);
         return res.status(500).json({ message: "Internal server error - self destruct" });
     }
+});
+
+router.put("/:id", ...postValidator(), ...postWarehouseValidator(), async (req, res) => {
+    const warehouseToUpdate = await knex("warehouses").where({ id: req.params.id });
+    if (!warehouseToUpdate.length) {
+        return res
+            .status(404)
+            .json({ message: `No warehouse was found with the id ${req.params.id}` });
+    }
+
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+        return res.status(400).json({
+            message: "PUT metadata for a new warehouse failed validation.",
+            errors: validationErrors.array(),
+        });
+    }
+
+    const {
+        warehouse_name,
+        address,
+        city,
+        country,
+        contact_name,
+        contact_position,
+        contact_phone,
+        contact_email,
+    } = matchedData(req);
+    const updatedWarehouseId = await knex("warehouses").where({ id: req.params.id }).update({
+        warehouse_name,
+        address,
+        city,
+        country,
+        contact_name,
+        contact_position,
+        contact_phone,
+        contact_email,
+    });
+    const updatedWarehouse = await knex("warehouses").where({ id: updatedWarehouseId });
+
+    res.status(200).json(updatedWarehouse[0]);
 });
 
 module.exports = router;

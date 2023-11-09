@@ -13,6 +13,22 @@ const postValidator = () => [
     body("", "Request body must be formatted as a JSON object.").isObject(),
 ];
 
+const removeNonDigits = value => value.replace(/\D/g, "");
+
+const isValidPhoneNumber = digits => [10, 11].includes(digits.length);
+
+const formatPhoneNumber = digits => {
+    const countryCode = digits.length === 11 ? `+${digits[0]} ` : "";
+    if (countryCode) digits = digits.slice(1);
+
+    const areaCode = `(${digits.slice(0, 3)}) `;
+    digits = digits.slice(3);
+
+    const lastSeven = [digits.slice(0, 3), digits.slice(3)].join("-");
+
+    return `${countryCode}${areaCode}${lastSeven}`;
+};
+
 const postItemValidator = () => [
     requiredField("warehouse_id"),
     requiredField("item_name"),
@@ -22,4 +38,25 @@ const postItemValidator = () => [
     requiredField("quantity"),
 ];
 
-module.exports = { postValidator, postItemValidator };
+const postWarehouseValidator = () => [
+    requiredField("warehouse_name"),
+    requiredField("address"),
+    requiredField("city"),
+    requiredField("country"),
+    requiredField("contact_name"),
+    requiredField("contact_position"),
+    body("contact_phone", "contact_phone must contain a 10 or 11 digit phone number")
+        .escape()
+        .trim()
+        .notEmpty()
+        .customSanitizer(removeNonDigits)
+        .custom(isValidPhoneNumber)
+        .customSanitizer(formatPhoneNumber),
+    body("contact_email", "contact_email must be a correctly formatted email address")
+        .escape()
+        .trim()
+        .notEmpty()
+        .isEmail(),
+];
+
+module.exports = { postValidator, postItemValidator, postWarehouseValidator };
