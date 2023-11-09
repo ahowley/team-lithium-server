@@ -1,3 +1,4 @@
+const fs = require("fs");
 const express = require("express");
 const { validationResult, matchedData } = require("express-validator");
 const { postItemValidator, postValidator } = require("../utility/validators");
@@ -60,6 +61,30 @@ router.put("/:id", ...postValidator(), ...postItemValidator(), async (req, res) 
     const updatedItem = await knex("inventories").where({ id: req.params.id });
 
     res.status(201).json(updatedItem);
+});
+
+router.get("/", (req, res) => {
+    knex("inventories")
+        .then(data => {
+            res.status(200).json(data);
+        })
+        .catch(err =>
+            res.status(400).json({ message: `There was an error getting inventory`, error: err }),
+        );
+});
+
+router.get("/:inventory_id", (req, res) => {
+    knex("inventories")
+        .where({ id: req.params.inventory_id })
+        .then(data => {
+            res.status(200).json(data[0]);
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: `There was an error getting inventory ${req.params.inventory_id}`,
+                error: err,
+            });
+        });
 });
 
 module.exports = router;
