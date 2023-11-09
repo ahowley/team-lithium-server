@@ -141,4 +141,5 @@ router.delete("/:id", async (req, res) => {
         return res.status(500).json({ message: "Internal server error - self destruct" });
     }
 });
+
 module.exports = router;
