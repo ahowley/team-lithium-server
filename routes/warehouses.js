@@ -20,7 +20,7 @@ router.get("/:id/inventories", async (req, res) => {
 });
 
 router.put("/:id", ...postValidator(), ...postWarehouseValidator(), async (req, res) => {
-    const warehouseId = `${req.params.id}`;
+    const warehouseId = req.params.id;
     const warehouseToUpdate = await knex("warehouses").where({ id: warehouseId });
     if (!warehouseToUpdate.length) {
         return res
