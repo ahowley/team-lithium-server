@@ -76,15 +76,18 @@ router.get("/:id", async (req, res) => {
         return res.status(500).json({ message: "Internal server error - self destruct" });
     }
 });
-const { v4: uuid } = require("uuid");
-const warehouseController = require("../controllers/warehouseControllers");
 
-router.route("/").get(warehouseController.getAllWarehouses);
-
-router
-    .route("/:warehouse_id")
-    .get(warehouseController.getSingleWarehouse);
-
-router.route("/:warehouse_id/inventory").get(warehouseController.getInventoryForWarehouse);
+router.get("/", (req, res) => {
+    knex("warehouses")
+        .then(data => {
+            res.status(200).json(data);
+        })
+        .catch(err => {
+            res.status(400).json({
+                message: `There was an error getting warehouse data`,
+                error: err,
+            });
+        });
+});
 
 module.exports = router;

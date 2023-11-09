@@ -30,14 +30,29 @@ router.post("/", ...postValidator(), ...postItemValidator(), async (req, res) =>
 
     res.status(201).json(createdItem);
 });
-const { v4: uuid } = require("uuid");
-const inventoryController = require("../controllers/inventoryControllers");
 
-router
-    .route("/")
-    .get(inventoryController.getAllInventory)
-    
-router
-    .route("/:inventory_id")
-    .get(inventoryController.getSingleInventory)
+router.get("/", (req, res) => {
+    knex("inventories")
+        .then(data => {
+            res.status(200).json(data);
+        })
+        .catch(err =>
+            res.status(400).json({ message: `There was an error getting inventory`, error: err }),
+        );
+});
+
+router.get("/:inventory_id", (req, res) => {
+    knex("inventories")
+        .where({ id: req.params.inventory_id })
+        .then(data => {
+            res.status(200).json(data);
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: `There was an error getting inventory ${req.params.inventory_id}`,
+                error: err,
+            });
+        });
+});
+
 module.exports = router;
