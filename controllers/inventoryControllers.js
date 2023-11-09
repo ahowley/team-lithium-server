@@ -1,21 +1,5 @@
 const knex = require("knex")(require("../knexfile"));
 
-exports.deleteInventoryItem = (req, res) => {
-    knex("inventories")
-        .where("id", req.params.inventory_id)
-        .delete()
-        .then(() => {
-            res.status(200).json({
-                message: `Inventory with id ${req.params.inventory_id} has been deleted successfully`,
-            });
-        })
-        .catch(err => {
-            res.status(500).json({
-                message: `There was an error deleting inventory ${req.params.inventory_id}`,
-                error: err,
-            });
-        });
-};
 
 exports.getAllInventory = (req, res) => {
     knex("inventories")
@@ -68,16 +52,3 @@ exports.addInventoryItem = (req, res) => {
     }
 };
 
-exports.editInventoryItem = (req, res) => {
-    knex("inventories")
-        .where({ id: req.params.inventory_id })
-        .update(req.body)
-        .then(data => {
-            res.sendStatus(200);
-        })
-        .catch(() => {
-            res.status(400).json({
-                message: `Error Editing Inventory Item`,
-            });
-        });
-};

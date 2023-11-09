@@ -6,13 +6,10 @@ const inventoryController = require("../controllers/inventoryControllers");
 
 router
     .route("/")
-    .get(inventoryController.getAllInventory)
-    .post(inventoryController.addInventoryItem);
+    .get(inventoryController.getAllInventory);
 
 router
     .route("/:inventory_id")
-    .get(inventoryController.getSingleInventory)
-    .delete(inventoryController.deleteInventoryItem)
-    .put(inventoryController.editInventoryItem);
+    .get(inventoryController.getSingleInventory);
 
 module.exports = router;
