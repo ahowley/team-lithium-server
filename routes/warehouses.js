@@ -1,4 +1,3 @@
-const fs = require("fs");
 const express = require("express");
 const { validationResult, matchedData } = require("express-validator");
 const { postWarehouseValidator, postValidator } = require("../utility/validators");
