@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "db:migrate": "knex migrate:latest",
-        "db:seed": "knex seed:run"
+        "db:seed": "knex seed:run",
+        "start": "node --watch index.js"
     },
     "keywords": [],
     "author": "",
