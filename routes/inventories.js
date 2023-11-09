@@ -60,7 +60,7 @@ router.put("/:id", ...postValidator(), ...postItemValidator(), async (req, res) 
         });
     const updatedItem = await knex("inventories").where({ id: req.params.id });
 
-    res.status(201).json(updatedItem);
+    res.status(200).json(updatedItem[0]);
 });
 
 router.get("/", (req, res) => {
