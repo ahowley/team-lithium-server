@@ -4,13 +4,11 @@ const router = express.Router();
 const { v4: uuid } = require("uuid");
 const warehouseController = require("../controllers/warehouseControllers");
 
-router.route("/").get(warehouseController.getAllWarehouses).post(warehouseController.addWarehouse);
+router.route("/").get(warehouseController.getAllWarehouses);
 
 router
     .route("/:warehouse_id")
-    .get(warehouseController.getSingleWarehouse)
-    .put(warehouseController.editWarehouse)
-    .delete(warehouseController.deleteWarehouse);
+    .get(warehouseController.getSingleWarehouse);
 
 router.route("/:warehouse_id/inventory").get(warehouseController.getInventoryForWarehouse);
 
