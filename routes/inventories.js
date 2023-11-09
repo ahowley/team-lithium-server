@@ -45,7 +45,7 @@ router.get("/:inventory_id", (req, res) => {
     knex("inventories")
         .where({ id: req.params.inventory_id })
         .then(data => {
-            res.status(200).json(data);
+            res.status(200).json(data[0]);
         })
         .catch(err => {
             res.status(500).json({
