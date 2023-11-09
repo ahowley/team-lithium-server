@@ -69,11 +69,24 @@ router.get("/:id", async (req, res) => {
                 message: `Warehouse with ID ${req.params.id} not found`,
             });
         }
-        return res.status(200).json(foundWarehouse);
+        return res.status(200).json(foundWarehouse[0]);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error - self destruct" });
     }
+});
+
+router.get("/", (req, res) => {
+    knex("warehouses")
+        .then(data => {
+            res.status(200).json(data);
+        })
+        .catch(err => {
+            res.status(400).json({
+                message: `There was an error getting warehouse data`,
+                error: err,
+            });
+        });
 });
 
 router.post("/", ...postValidator(), ...postWarehouseValidator(), async (req, res) => {
