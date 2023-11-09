@@ -113,4 +113,19 @@ router.post("/", ...postValidator(), ...postWarehouseValidator(), async (req, re
     res.status(201).json(createdWarehouse);
 });
 
+router.delete("/:id", async (req, res) => {
+    try {
+        const deleteWarehouse = await knex("warehouses").where({ id: req.params.id }).delete();
+
+        if (deleteWarehouse === 0) {
+            return res.status(404).json({
+                message: `Warehouse with ID ${req.params.id} not found`,
+            });
+        }
+        return res.status(204).json(deleteWarehouse);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error - self destruct" });
+    }
+});
 module.exports = router;
