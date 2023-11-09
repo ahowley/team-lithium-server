@@ -1,4 +1,3 @@
-const fs = require("fs");
 const express = require("express");
 const { validationResult, matchedData } = require("express-validator");
 const { postWarehouseValidator, postValidator } = require("../utility/validators");
@@ -88,6 +87,43 @@ router.get("/", (req, res) => {
                 error: err,
             });
         });
+});
+
+router.post("/", ...postValidator(), ...postWarehouseValidator(), async (req, res) => {
+    const validationErrors = validationResult(req);
+
+    if (!validationErrors.isEmpty()) {
+        return res.status(400).json({
+            message: "POST metadata for a new video failed validation.",
+            errors: validationErrors.array(),
+        });
+    }
+    const {
+        warehouse_name,
+        address,
+        city,
+        country,
+        contact_name,
+        contact_position,
+        contact_phone,
+        contact_email,
+    } = matchedData(req);
+
+    const newWarehouseIds = await knex("warehouses").insert([
+        {
+            warehouse_name,
+            address,
+            city,
+            country,
+            contact_name,
+            contact_position,
+            contact_phone,
+            contact_email,
+        },
+    ]);
+    const createdWarehouse = await knex("warehouses").where({ id: newWarehouseIds[0] });
+
+    res.status(201).json(createdWarehouse);
 });
 
 module.exports = router;
