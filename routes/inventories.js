@@ -30,7 +30,12 @@ router.post("/", ...postValidator(), ...postItemValidator(), async (req, res) =>
     res.status(201).json(createdItem);
 });
 
-router.patch("/:id", ...postValidator(), ...postItemValidator(), async (req, res) => {
+router.put("/:id", ...postValidator(), ...postItemValidator(), async (req, res) => {
+    const itemToUpdate = await knex("inventories").where({ id: req.params.id });
+    if (!itemToUpdate.length) {
+        return res.status(404).json({ message: `No item was found with the id ${req.params.id}` });
+    }
+
     const validationErrors = validationResult(req);
 
     if (!validationErrors.isEmpty()) {
@@ -41,20 +46,20 @@ router.patch("/:id", ...postValidator(), ...postItemValidator(), async (req, res
     }
     const { item_name, description, category, status, quantity } = matchedData(req);
 
-    const patchItems = await knex("inventories")
+    const updatedItems = await knex("inventories")
         .where({
             id: req.params.id,
         })
         .update({
-            item_name: item_name,
-            description: description,
-            category: category,
-            status: status,
-            quantity: quantity,
+            item_name,
+            description,
+            category,
+            status,
+            quantity,
         });
-    const patchedItem = await knex("inventories").where({ id: req.params.id });
+    const updatedItem = await knex("inventories").where({ id: req.params.id });
 
-    res.status(201).json(patchedItem);
+    res.status(201).json(updatedItem);
 });
 
 module.exports = router;
