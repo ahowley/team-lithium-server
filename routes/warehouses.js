@@ -6,10 +6,9 @@ const knex = require("knex")(require("../knexfile"));
 
 router.get("/:id/inventories", async (req, res) => {
     try {
-        const inventoriesByWarehouse = await knex("warehouses")
-            .join("inventories", "inventories.warehouse_id", "warehouses.id")
+        const inventoriesByWarehouse = await knex("inventories")
             .where({ warehouse_id: req.params.id })
-            .select("item_name", "category", "status", "quantity", "warehouse_name");
+            .select("inventories.id", "item_name", "category", "status", "quantity");
 
         if (inventoriesByWarehouse.length === 0) {
             return res.status(404).json({ message: "No inventory found" });
