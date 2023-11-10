@@ -84,4 +84,20 @@ router.get("/:id", async (req, res) => {
     return res.status(200).json(inventoryJoin[0]);
 });
 
+router.delete("/:id", async (req, res) => {
+    try {
+        const deleteInventory = await knex("inventories").where({ id: req.params.id }).delete();
+
+        if (deleteInventory === 0) {
+            return res.status(404).json({
+                message: `Inventory with ID ${req.params.id} not found.. self destruct initiated`,
+            });
+        }
+        return res.status(204).json(deleteInventory);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error - self destruct" });
+    }
+});
+
 module.exports = router;
