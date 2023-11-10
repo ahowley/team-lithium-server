@@ -62,14 +62,12 @@ router.put("/:id", ...postValidator(), ...postItemValidator(), async (req, res) 
     res.status(200).json(updatedItem[0]);
 });
 
-router.get("/", (req, res) => {
-    knex("inventories")
-        .then(data => {
-            res.status(200).json(data);
-        })
-        .catch(err =>
-            res.status(400).json({ message: `There was an error getting inventory`, error: err }),
-        );
+router.get("/", async (req, res) => {
+    const inventories = await knex("warehouses")
+        .join("inventories", "inventories.warehouse_id", "warehouses.id")
+        .select("inventories.id", "item_name", "category", "status", "quantity", "warehouse_name");
+
+    return res.status(200).json(inventories);
 });
 
 router.get("/:id", async (req, res) => {
