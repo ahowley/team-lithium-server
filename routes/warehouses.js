@@ -144,4 +144,27 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
+router.delete("/:warehouseId/inventories/:itemId", async (req, res) => {
+    const { warehouseId, itemId } = req.params;
+
+    try {
+        const itemInWarehouse = await knex("inventories")
+            .where({ id: itemId, warehouse_id: warehouseId })
+            .first();
+
+        if (!itemInWarehouse) {
+            return res.status(404).json({
+                message: `Item with ID ${itemId} not found in warehouse with ID ${warehouseId}`,
+            });
+        }
+
+        await knex("inventories").where({ id: itemId }).delete();
+
+        return res.status(204).json();
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 module.exports = router;
