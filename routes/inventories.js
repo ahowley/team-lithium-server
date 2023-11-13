@@ -70,6 +70,11 @@ router.get("/", async (req, res) => {
     return res.status(200).json(inventories);
 });
 
+router.get("/categories", async (req, res) => {
+    const categories = await knex("inventories").distinct("category");
+    return res.status(200).json(categories.map(cat => cat.category).sort());
+});
+
 router.get("/:id", async (req, res) => {
     const itemToUpdate = await knex("inventories").where({ id: req.params.id });
     if (!itemToUpdate.length) {
@@ -79,7 +84,15 @@ router.get("/:id", async (req, res) => {
     const inventoryJoin = await knex("warehouses")
         .join("inventories", "inventories.warehouse_id", "warehouses.id")
         .where({ "inventories.id": req.params.id })
-        .select("item_name", "description", "category", "status", "quantity", "warehouse_name");
+        .select(
+            "item_name",
+            "description",
+            "category",
+            "status",
+            "quantity",
+            "warehouse_id",
+            "warehouse_name",
+        );
 
     return res.status(200).json(inventoryJoin[0]);
 });
