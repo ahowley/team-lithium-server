@@ -41,7 +41,7 @@ exports.seed = async function (knex) {
         },
         {
             id: 4,
-            warehouse_name: "SF",
+            warehouse_name: "San Fran",
             address: "890 Brannnan Street",
             city: "San Francisco",
             country: "USA",
@@ -78,7 +78,7 @@ exports.seed = async function (knex) {
             address: "2650 NW 5th Avenue",
             city: "Miami",
             country: "USA",
-            contact_name: "Alana Thomas",
+            contact_name: "Jordan Dooley",
             contact_position: "Warehouse Manager",
             contact_phone: "+1 (646) 123-1234",
             contact_email: "athomas@instock.com",
