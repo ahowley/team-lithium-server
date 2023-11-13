@@ -1,4 +1,5 @@
 const { body, header } = require("express-validator");
+const knex = require("knex")(require("../knexfile"));
 
 const requiredField = fieldName =>
     body(fieldName, `${fieldName} is a required field, but is empty in the request.`)
@@ -29,13 +30,32 @@ const formatPhoneNumber = digits => {
     return `${countryCode}${areaCode}${lastSeven}`;
 };
 
+const isValidWarehouseId = async id => {
+    const warehouseIds = await knex("warehouses").select("id");
+    return warehouseIds.includes(id);
+};
+
+const isValidStatus = status => {
+    return ["In Stock", "Out of Stock"].includes(status);
+};
+
 const postItemValidator = () => [
-    requiredField("warehouse_id"),
+    body("warehouse_id", "warehouse_id not found")
+        .escape()
+        .trim()
+        .notEmpty()
+        .isInt()
+        .custom(isValidWarehouseId),
     requiredField("item_name"),
     requiredField("description"),
     requiredField("category"),
-    requiredField("status"),
+    body("status", "status must be either 'In Stock' or 'Out of Stock'")
+        .escape()
+        .trim()
+        .notEmpty()
+        .custom(isValidStatus),
     requiredField("quantity"),
+    body("quantity", "quantity must be an integer").escape().trim().notEmpty().isInt(),
 ];
 
 const postWarehouseValidator = () => [
