@@ -40,7 +40,7 @@ router.put("/:id", ...postValidator(), ...postItemValidator(), async (req, res) 
 
     if (!validationErrors.isEmpty()) {
         return res.status(400).json({
-            message: "PATCH metadata for a new item failed validation.",
+            message: "PUT metadata for a new item failed validation.",
             errors: validationErrors.array(),
         });
     }
