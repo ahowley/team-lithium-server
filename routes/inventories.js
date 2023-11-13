@@ -44,13 +44,14 @@ router.put("/:id", ...postValidator(), ...postItemValidator(), async (req, res) 
             errors: validationErrors.array(),
         });
     }
-    const { item_name, description, category, status, quantity } = matchedData(req);
+    const { warehouse_id, item_name, description, category, status, quantity } = matchedData(req);
 
     await knex("inventories")
         .where({
             id: req.params.id,
         })
         .update({
+            warehouse_id,
             item_name,
             description,
             category,
