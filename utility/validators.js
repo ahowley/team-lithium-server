@@ -1,5 +1,5 @@
 const { body, header } = require("express-validator");
-const knex = require("knex");
+const knex = require("knex")(require("../knexfile"));
 
 const requiredField = fieldName =>
     body(fieldName, `${fieldName} is a required field, but is empty in the request.`)
