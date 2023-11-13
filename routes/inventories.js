@@ -17,12 +17,12 @@ router.post("/", ...postValidator(), ...postItemValidator(), async (req, res) =>
 
     const newItemsIds = await knex("inventories").insert([
         {
-            warehouse_id: warehouse_id,
-            item_name: item_name,
-            description: description,
-            category: category,
-            status: status,
-            quantity: quantity,
+            warehouse_id: parseInt(warehouse_id),
+            item_name,
+            description,
+            category,
+            status,
+            quantity: parseInt(quantity),
         },
     ]);
     const createdItem = await knex("inventories").where({ id: newItemsIds[0] });
@@ -51,15 +51,14 @@ router.put("/:id", ...postValidator(), ...postItemValidator(), async (req, res) 
             id: req.params.id,
         })
         .update({
-            warehouse_id,
+            warehouse_id: parseInt(warehouse_id),
             item_name,
             description,
             category,
             status,
-            quantity,
+            quantity: parseInt(quantity),
         });
     const updatedItem = await knex("inventories").where({ id: req.params.id });
-
     res.status(200).json(updatedItem[0]);
 });
 
